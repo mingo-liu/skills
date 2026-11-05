@@ -3,7 +3,7 @@ name: uber-go-style
 description: Write, refactor, and review Go code using the complete Uber Go Style Guide. Use for Go implementation and style decisions, or when the user requests Uber Go conventions or a compliance review.
 ---
 
-# Uber Go Style Guide
+# Uber Go Style
 
 Apply the bundled [complete guide](references/uber-go-style-guide.md)
 when writing, refactoring, explaining, or reviewing Go code. It includes every
