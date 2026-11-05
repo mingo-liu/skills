@@ -1,0 +1,3 @@
+interface:
+  display_name: "Google Go Style"
+  short_description: "Write and review Go using Google style guidance"
