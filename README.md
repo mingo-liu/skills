@@ -1,6 +1,6 @@
 # Skills
 
-A collection of coding agent skills for code review, Go style, and Git commit messages. Each skill bundles reference documents for offline use.
+A collection of coding agent skills for code review, Go style, Git commit messages, and HTML flowcharts. Each skill bundles reference documents for offline use.
 
 ## Available skills
 
@@ -9,6 +9,7 @@ A collection of coding agent skills for code review, Go style, and Git commit me
 | [code-review](skills/code-review/SKILL.md) | Review changes against requirements and project standards, with risk assessment, evidence, and prioritized findings. |
 | [conventional-commits](skills/conventional-commits/SKILL.md) | Draft, revise, and review commit messages using Conventional Commits 1.0.0. |
 | [google-go-style](skills/google-go-style/SKILL.md) | Write, refactor, and review Go code using Google's Go Style Guide, Style Decisions, and Best Practices. |
+| [pi-flowchart](skills/pi-flowchart/SKILL.md) | Create standalone HTML flowcharts inspired by pi.dev. |
 | [uber-go-style](skills/uber-go-style/SKILL.md) | Write, refactor, and review Go code using the complete Uber Go Style Guide. |
 
 ## Install

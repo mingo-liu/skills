@@ -1,0 +1,3 @@
+interface:
+  display_name: "Pi Flowchart"
+  short_description: "Create Pi-inspired HTML flowcharts"

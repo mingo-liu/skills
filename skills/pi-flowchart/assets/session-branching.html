@@ -1,0 +1,313 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Branch a Pi session</title>
+  <link rel="icon" href="data:,">
+  <style>
+    :root {
+      color-scheme: dark;
+      --page: #0d1116;
+      --canvas: #161d27;
+      --node: #212730;
+      --decision: #252f3d;
+      --text: #ebe7e4;
+      --muted: #9fa4ab;
+      --rule: #495059;
+      --accent: #6a9fcc;
+      --grid: rgb(106 159 204 / 0.09);
+      --serif: Georgia, "Times New Roman", serif;
+      --mono: ui-monospace, "SFMono-Regular", Menlo, Consolas, monospace;
+    }
+
+    @media (prefers-color-scheme: light) {
+      :root {
+        color-scheme: light;
+        --page: #ebe7e4;
+        --canvas: #eef1f3;
+        --node: #f4f2f0;
+        --decision: #e4e9ef;
+        --text: #252f3d;
+        --muted: #5c5752;
+        --rule: #bdb3ac;
+        --accent: #4b607c;
+        --grid: rgb(75 96 124 / 0.09);
+      }
+    }
+
+    body {
+      margin: 0;
+      background: var(--page) radial-gradient(ellipse at 50% 0, var(--canvas), transparent 44rem) no-repeat;
+      color: var(--text);
+      font: 1rem / 1.55 var(--serif);
+    }
+
+    main {
+      max-inline-size: 56rem;
+      margin-inline: auto;
+      padding: clamp(2rem, 7vw, 5.25rem) clamp(0.75rem, 4vw, 2.5rem) 3rem;
+    }
+
+    h1 {
+      margin: 0;
+      font-size: clamp(2.25rem, 1.5rem + 3.8vw, 4.75rem);
+      font-weight: normal;
+      letter-spacing: -0.045em;
+      line-height: 1.05;
+    }
+
+    header p {
+      margin: 0.9rem 0 clamp(1.5rem, 4vw, 2.75rem);
+      color: var(--muted);
+      font-size: 1.125rem;
+    }
+
+    figure {
+      margin: 0;
+      border: 1px solid var(--rule);
+      border-radius: 0.5rem;
+      background: var(--canvas);
+    }
+
+    figcaption {
+      display: flex;
+      align-items: center;
+      gap: 0.75rem;
+      padding: 0.75rem 1rem;
+      border-block-end: 1px solid var(--rule);
+      border-radius: 0.5rem 0.5rem 0 0;
+      background: var(--node);
+      color: var(--muted);
+      font: 0.8125rem / 1.5 var(--mono);
+    }
+
+    figcaption span {
+      color: var(--accent);
+    }
+
+    .diagram {
+      padding: clamp(1.25rem, 4vw, 2.75rem) clamp(0.625rem, 3vw, 2rem);
+      background-image:
+        linear-gradient(var(--grid) 1px, transparent 1px),
+        linear-gradient(90deg, var(--grid) 1px, transparent 1px);
+      background-size: 1.25rem 1.25rem;
+      background-position: center top;
+    }
+
+    .flow,
+    .branches {
+      list-style: none;
+      margin: 0;
+      padding: 0;
+    }
+
+    .node {
+      padding: 0.8rem clamp(0.6rem, 2vw, 1.25rem);
+      border: 1px solid var(--rule);
+      border-radius: 0.375rem;
+      background: var(--node);
+      overflow-wrap: anywhere;
+    }
+
+    .step {
+      max-inline-size: 20rem;
+      margin-inline: auto;
+      text-align: center;
+    }
+
+    .decision {
+      border-block-start: 2px solid var(--accent);
+      background: var(--decision);
+    }
+
+    .decision span,
+    .branch-label {
+      color: var(--accent);
+      font: 0.8125rem / 1.4 var(--mono);
+    }
+
+    .decision p {
+      margin: 0.25rem 0 0;
+      font-size: 1.125rem;
+    }
+
+    .stem {
+      display: block;
+      inline-size: 1px;
+      block-size: 1.5rem;
+      margin-inline: auto;
+      background: var(--accent);
+    }
+
+    .arrow-tip::after {
+      position: absolute;
+      inset-block-end: 2px;
+      inset-inline-start: 50%;
+      inline-size: 0.375rem;
+      block-size: 0.375rem;
+      border-inline-end: 1px solid var(--accent);
+      border-block-end: 1px solid var(--accent);
+      transform: translateX(-50%) rotate(45deg);
+      content: "";
+    }
+
+    .stem,
+    .branch-label {
+      position: relative;
+    }
+
+    .branches {
+      --branch-gap: clamp(0.625rem, 3vw, 1.5rem);
+      display: grid;
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+      gap: var(--branch-gap);
+      max-inline-size: 36rem;
+      margin-inline: auto;
+    }
+
+    .branch {
+      display: grid;
+      grid-template-rows: 3.25rem 1fr;
+    }
+
+    .branch-label {
+      display: grid;
+      place-items: center;
+      background: linear-gradient(var(--accent), var(--accent)) center / 1px 100% no-repeat;
+    }
+
+    .branch-label::before {
+      position: absolute;
+      inset-block-start: 0;
+      inset-inline-start: 50%;
+      inline-size: calc((100% + var(--branch-gap)) / 2 + 1px);
+      border-block-start: 1px solid var(--accent);
+      content: "";
+    }
+
+    .branch:last-child .branch-label::before {
+      inset-inline-start: auto;
+      inset-inline-end: 50%;
+    }
+
+    .branch-label span {
+      padding: 0.125rem 0.45rem;
+      border: 1px solid var(--rule);
+      border-radius: 0.2rem;
+      background: var(--canvas);
+    }
+
+    .branch .node {
+      margin: 0;
+    }
+
+    .branch code {
+      color: var(--accent);
+      font: 600 1.125rem / 1.4 var(--mono);
+    }
+
+    .branch p {
+      margin: 0.4rem 0 0;
+      color: var(--muted);
+    }
+
+    footer {
+      display: flex;
+      flex-wrap: wrap;
+      justify-content: space-between;
+      align-items: baseline;
+      gap: 0.75rem 2rem;
+      margin-block-start: 1rem;
+      color: var(--muted);
+    }
+
+    details {
+      max-inline-size: 42ch;
+    }
+
+    summary {
+      color: var(--text);
+      cursor: pointer;
+    }
+
+    details p {
+      margin: 0.4rem 0 0;
+    }
+
+    footer a {
+      color: var(--accent);
+      font: 0.8125rem / 1.5 var(--mono);
+      text-underline-offset: 0.2em;
+    }
+
+    :where(summary, a):focus-visible {
+      outline: 2px solid var(--accent);
+      outline-offset: 4px;
+    }
+
+    @media (forced-colors: active) {
+      .stem,
+      .branch-label {
+        background: linear-gradient(CanvasText, CanvasText) center / 1px 100% no-repeat;
+        forced-color-adjust: none;
+        color: CanvasText;
+        --accent: CanvasText;
+        --canvas: Canvas;
+        --rule: CanvasText;
+      }
+    }
+  </style>
+</head>
+<body>
+  <main>
+    <header>
+      <h1>Branch a <em>Pi session</em></h1>
+      <p>Explore a different answer from an earlier prompt.</p>
+    </header>
+
+    <figure>
+      <figcaption><span aria-hidden="true">›_</span> Interactive mode</figcaption>
+      <div class="diagram">
+        <ol class="flow" role="list">
+          <li>
+            <div class="node step">Open or resume the session</div>
+            <span class="stem arrow-tip" aria-hidden="true"></span>
+          </li>
+          <li>
+            <div class="node step decision">
+              <span>Decision</span>
+              <p>Keep both paths in one session?</p>
+            </div>
+            <span class="stem" aria-hidden="true"></span>
+            <ul class="branches" role="list">
+              <li class="branch">
+                <div class="branch-label arrow-tip"><span>Yes</span></div>
+                <div class="node">
+                  <code>/tree</code>
+                  <p>Choose an earlier user message, edit the prompt, and submit it to start a branch in the same session.</p>
+                </div>
+              </li>
+              <li class="branch">
+                <div class="branch-label arrow-tip"><span>No</span></div>
+                <div class="node">
+                  <code>/fork</code>
+                  <p>Choose an earlier user message to start a separate session from that point.</p>
+                </div>
+              </li>
+            </ul>
+          </li>
+        </ol>
+      </div>
+    </figure>
+
+    <footer>
+      <details>
+        <summary>What happens to the original path?</summary>
+        <p>With <code>/tree</code>, you can return to it in the same session. With <code>/fork</code>, it stays in the original session.</p>
+      </details>
+      <a href="https://docs.pi.dev/latest/sessions">Pi session documentation <span aria-hidden="true">↗</span></a>
+    </footer>
+  </main>
+</body>
+</html>
